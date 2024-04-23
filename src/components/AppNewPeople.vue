@@ -5,7 +5,7 @@
     </div>
   </div>
   <div class="card center" v-else>
-    <h4>цыцц</h4>
+    <h4>Людей пока нет.</h4>
     <br />
     <button class="btn" @click="$emit('load')">Загрузить список людей</button>
   </div>
