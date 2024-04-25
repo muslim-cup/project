@@ -10,7 +10,11 @@
         Создать человека
       </button>
     </form>
-    <app-new-people @load="loadPeople" :people="people"></app-new-people>
+    <app-new-people 
+     @load="loadPeople"
+     :people="people"
+     @remove="removePeople"
+     ></app-new-people>
   </div>
 </template>
 
@@ -43,24 +47,33 @@ export default {
       );
       const firstBaseData = await response.json();
       console.log(firstBaseData);
-      this.name = "";
       this.people.push({
         firstName: this.name,
         id: firstBaseData.name,
       });
+      this.name = "";
     },
     async loadPeople() {
-      const { data } = await axios.get(
+      try {
+        const { data } = await axios.get(
         "https://vue-with-http-3c549-default-rtdb.firebaseio.com/people.json"
       );
-      const result = Object.keys(data).map((key) => {
+      console.log(data)
+      const res = Object.keys(data).map(key => {
         return {
           id: key,
-          firstName: data[key].firstName,
+          ...data[key]
         };
       });
-      this.people = result;
+      this.people = res;
+      } catch (e) {
+        console.log(e.message)
+      }
     },
+   async removePeople (id) {
+      await axios.delete(`https://vue-with-http-3c549-default-rtdb.firebaseio.com/people/${id}.json`)
+      this.people = this.people.filter(people => people.id !== id)
+    }
   },
   components: { AppNewPeople },
 };
